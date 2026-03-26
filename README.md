@@ -97,3 +97,13 @@ Analyzes a payload and returns the risk score, findings, and masked logs.
 GET `/api/stream`
 An SSE (Server-Sent Event) connection point to tail the active backend log stream in real-time.
 <img width="1919" height="916" alt="Screenshot 2026-03-26 223337" src="https://github.com/user-attachments/assets/82e3987f-e645-44af-8d15-8d9b4573c1fa" />
+<img width="1911" height="922" alt="Screenshot 2026-03-26 223420" src="https://github.com/user-attachments/assets/4f37590d-d113-4e17-9c59-6096fc6d40b3" />
+<img width="1911" height="914" alt="Screenshot 2026-03-26 223442" src="https://github.com/user-attachments/assets/2b70ceb3-7585-4592-8d4a-e8fc710a177b" />
+<img width="1908" height="912" alt="Screenshot 2026-03-26 225751" src="https://github.com/user-attachments/assets/5da2e504-fb52-4e6d-8406-9acbabd7b775" />
+<img width="1860" height="916" alt="Screenshot 2026-03-26 225646" src="https://github.com/user-attachments/assets/a865d39a-52e5-42c7-a84b-6c439adc7dee" />
+<img width="1915" height="663" alt="Screenshot 2026-03-26 225625" src="https://github.com/user-attachments/assets/8642e829-3c9e-486f-86ee-7dcb60368abb" />
+<img width="984" height="568" alt="Screenshot 2026-03-26 223827" src="https://github.com/user-attachments/assets/c8cbece6-ad3e-4bb4-910a-c0b4e62e57ba" />
+<img width="1656" height="899" alt="Screenshot 2026-03-26 223459" src="https://github.com/user-attachments/assets/09bf77dd-0b99-4c99-bead-72bd699dc164" />
+
+<img width="1908" height="912" alt="Screenshot 2026-03-26 225751" src="https://github.com/user-attachments/assets/de591068-73d9-4021-b674-b26d48b38b0f" />
+![Uploading Screenshot 2026-03-26 223337.png…]()
