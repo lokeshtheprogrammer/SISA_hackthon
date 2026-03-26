@@ -1,0 +1,10 @@
+2024-01-15 10:00:01 INFO  [auth] User login: email=admin@company.com
+2024-01-15 10:00:02 DEBUG [db]   Connection string: password=SuperSecret123!
+2024-01-15 10:00:03 INFO  [api]  API call initiated: api_key=sk-abcdefghijklmnop12345678
+2024-01-15 10:00:04 INFO  [svc]  Auth header: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.abc.xyz
+2024-01-15 10:00:05 INFO  [crm]  Contact phone: +1-800-555-1234
+2024-01-15 10:00:06 ERROR [app]  Traceback (most recent call last):
+2024-01-15 10:00:06 ERROR [app]    File "app.py", line 99, in process
+2024-01-15 10:00:06 ERROR [app]  Error: NullPointerException at com.app.Service.run(Service.java:42)
+2024-01-15 10:00:07 INFO  [app]  Retry attempt 1...
+2024-01-15 10:00:08 INFO  [app]  Service recovered.

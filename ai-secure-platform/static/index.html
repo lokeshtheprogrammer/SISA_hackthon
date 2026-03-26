@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGDIP | AI Secure Data Intelligence Platform</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Charts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-base: #0B0F19;
+            --bg-surface: #111827;
+            --bg-glass: rgba(17, 24, 39, 0.65);
+            --bg-glass-hover: rgba(31, 41, 55, 0.85);
+            
+            /* Accents */
+            --cyan: #00F5FF;
+            --green: #00FF9F;
+            --purple: #8B5CF6;
+            --red: #FF3366;
+            --yellow: #F59E0B;
+            
+            /* Text */
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+            
+            /* Fonts */
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            
+            /* Effects */
+            --glow-cyan: 0 0 15px rgba(0, 245, 255, 0.3);
+            --glow-purple: 0 0 15px rgba(139, 92, 246, 0.3);
+            --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(12px);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: center center;
+        }
+
+        /* Ambient Glow Vectors */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--cyan); top: -100px; left: -100px; animation: float 10s ease-in-out infinite alternate; }
+        .orb-2 { width: 500px; height: 500px; background: var(--purple); bottom: -200px; right: -100px; animation: float 12s ease-in-out infinite alternate-reverse; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Typography */
+        h1, h2, h3, h4, h5 { font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase; }
+        .text-cyan { color: var(--cyan); text-shadow: var(--glow-cyan); }
+        .text-purple { color: var(--purple); text-shadow: var(--glow-purple); }
+
+        /* Glass Cards */
+        .glass-panel {
+            background: var(--bg-glass);
+            backdrop-filter: var(--glass-blur);
+            border: var(--border-glass);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glass-panel:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 245, 255, 0.05);
+        }
+
+        /* --- AUTH LOGIN SCREEN --- */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(11, 15, 25, 0.9);
+            backdrop-filter: blur(8px);
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .auth-brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .auth-brand i { width: 48px; height: 48px; color: var(--cyan); filter: drop-shadow(0 0 10px var(--cyan)); margin-bottom: 12px; }
+        .auth-brand h2 { font-size: 2rem; color: #fff; }
+        .auth-brand p { font-family: var(--font-code); color: var(--cyan); font-size: 0.8rem; letter-spacing: 3px; }
+
+        /* Forms */
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label {
+            display: flex; align-items: center; gap: 8px; font-family: var(--font-code);
+            font-size: 0.75rem; color: var(--cyan); margin-bottom: 8px; letter-spacing: 1px;
+        }
+        .input-group input {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: inset 0 0 10px rgba(0, 245, 255, 0.1), 0 0 15px rgba(0, 245, 255, 0.2);
+            background: rgba(0, 245, 255, 0.05);
+        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.3); }
+
+        .btn-cyber {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: linear-gradient(90deg, var(--cyan) 0%, #00b4d8 100%);
+            color: #000;
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 245, 255, 0.4);
+            filter: brightness(1.2);
+        }
+        .text-link { color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 24px; cursor: pointer; transition: 0.3s; }
+        .text-link span { color: var(--cyan); font-weight: 600; text-decoration: none; }
+        .text-link span:hover { text-shadow: var(--glow-cyan); }
+        .error-msg { background: rgba(255, 51, 102, 0.1); border: 1px solid var(--red); color: var(--red); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 20px; text-align: center; display: none; }
+
+        /* --- DASHBOARD LAYOUT --- */
+        #app { display: flex; width: 100%; height: 100vh; position: relative; z-index: 10; }
+        
+        /* Sidebar */
+        aside {
+            width: 280px;
+            background: var(--bg-surface);
+            border-right: var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+            z-index: 20;
+        }
+        .sidebar-brand {
+            padding: 0 24px 32px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: var(--border-glass);
+            margin-bottom: 24px;
+        }
+        .sidebar-brand h2 { color: var(--cyan); font-size: 1.5rem; text-shadow: var(--glow-cyan); }
+        .nav-link {
+            padding: 14px 24px;
+            margin: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 245, 255, 0.1);
+            color: var(--cyan);
+            box-shadow: inset 3px 0 0 var(--cyan);
+        }
+        
+        /* Main Area */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 32px 32px 32px;
+        }
+        
+        /* Topnav */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg-base);
+            z-index: 30;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            margin-bottom: 24px;
+        }
+        .header-title { display: flex; align-items: center; gap: 12px; }
+        .header-title h2 { font-size: 1.25rem; font-weight: 600; color: #fff; letter-spacing: 0px; }
+        .header-badge { background: rgba(0, 255, 159, 0.1); color: var(--green); border: 1px solid var(--green); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-family: var(--font-code); display: flex; align-items: center; gap: 6px; }
+        .pulse-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; }
+        
+        .user-profile { display: flex; align-items: center; gap: 16px; }
+        .operator-info { text-align: right; }
+        .operator-name { font-weight: 600; font-size: 0.9rem; color: #fff; }
+        .operator-role { font-family: var(--font-code); color: var(--cyan); font-size: 0.7rem; }
+        .logout-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .logout-btn:hover { background: rgba(255, 51, 102, 0.1); color: var(--red); border-color: var(--red); }
+
+        /* KPI Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px; }
+        .kpi-card { display: flex; flex-direction: column; justify-content: center; }
+        .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .kpi-icon.blue { background: rgba(0, 245, 255, 0.1); color: var(--cyan); }
+        .kpi-icon.yellow { background: rgba(245, 158, 11, 0.1); color: var(--yellow); }
+        .kpi-icon.red { background: rgba(255, 51, 102, 0.1); color: var(--red); }
+        .kpi-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-head); letter-spacing: 1px; }
+        .kpi-value { font-size: 2.5rem; font-weight: 700; font-family: var(--font-code); color: #fff; }
+
+        /* Scanner Specific */
+        .drop-zone {
+            border: 2px dashed rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.02);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 24px;
+        }
+        .drop-zone:hover { border-color: var(--cyan); background: rgba(0, 245, 255, 0.05); }
+        .drop-zone i { width: 48px; height: 48px; color: var(--cyan); margin-bottom: 16px; }
+        
+        textarea.cyber-textarea {
+            width: 100%; height: 180px;
+            background: rgba(0,0,0,0.5); border: var(--border-glass); border-radius: 12px;
+            color: var(--green); font-family: var(--font-code); font-size: 0.85rem; padding: 16px;
+            resize: none; transition: 0.3s; margin-bottom: 24px;
+        }
+        textarea.cyber-textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,245,255,0.1); }
+        
+        /* Threat Gauges & Results */
+        .results-container { display: none; margin-top: 32px; animation: slideUp 0.5s ease; }
+        .results-container.visible { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
+        .risk-badge { 
+            display: inline-block; padding: 12px 24px; border-radius: 8px; font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 16px; width: 100%;
+        }
+        .risk-badge.critical { background: rgba(255, 51, 102, 0.1); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 20px rgba(255,51,102,0.2); }
+        .risk-badge.high { background: rgba(245, 158, 11, 0.1); color: var(--yellow); border: 1px solid var(--yellow); }
+        .risk-badge.low { background: rgba(0, 255, 159, 0.1); color: var(--green); border: 1px solid var(--green); }
+        
+        /* Findings & Logs */
+        .finding-item {
+            background: rgba(0,0,0,0.4); border-left: 3px solid var(--cyan); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px; font-family: var(--font-code);
+        }
+        .finding-type { color: var(--cyan); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px;}
+        .finding-desc { color: #fff; font-size: 0.85rem; }
+
+        .terminal-box {
+            background: #050914; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; height: 400px; overflow-y: auto; font-family: var(--font-code); font-size: 0.8rem;
+        }
+        .log-line { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 6px 0; display: flex; gap: 12px; }
+        .log-line:hover { background: rgba(255,255,255,0.02); }
+        .log-ts { color: var(--text-muted); }
+        .log-num { color: #4B5563; min-width: 30px; }
+        
+        .tag-flagged { background: rgba(255,51,102,0.1); color: var(--red); border: 1px solid var(--red); padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; }
+        .tag-anomaly { background: rgba(245,158,11,0.1); color: var(--yellow); border: 1px solid var(--yellow); padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; }
+
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <!-- === AUTHENTICATION GATEWAY === -->
+    <div id="login-screen">
+        <div class="glass-panel auth-card" id="auth-container">
+            <div class="auth-brand">
+                <i data-lucide="shield-alert"></i>
+                <h2>AGDIP</h2>
+                <p>SECURE TERMINAL V6.0</p>
+            </div>
+
+            <!-- SIGN IN VIEW -->
+            <div id="signin-view">
+                <div id="login-error" class="error-msg"></div>
+                <div class="input-group">
+                    <label><i data-lucide="user"></i> IDENTITY ALIAS</label>
+                    <input type="text" id="user-val" placeholder="Username">
+                </div>
+                <div class="input-group" style="margin-bottom: 32px;">
+                    <label><i data-lucide="lock"></i> ACCESS PASSCODE</label>
+                    <input type="password" id="pass-val" placeholder="••••••••">
+                </div>
+                <button class="btn-cyber" onclick="attemptLogin()">
+                    Initialize Uplink <i data-lucide="cpu"></i>
+                </button>
+                <div class="text-link" onclick="toggleAuth('signup')">
+                    New Operator? <span>Request Clearance</span>
+                </div>
+            </div>
+
+            <!-- SIGN UP VIEW -->
+            <div id="signup-view" class="hidden">
+                <div id="signup-error" class="error-msg"></div>
+                <div class="input-group">
+                    <label><i data-lucide="user-plus"></i> NEW ALIAS</label>
+                    <input type="text" id="reg-user" placeholder="Choose username">
+                </div>
+                <div class="input-group">
+                    <label><i data-lucide="mail"></i> COMMS RELAY (EMAIL)</label>
+                    <input type="email" id="reg-email" placeholder="agent@enterprise.com">
+                </div>
+                <div class="input-group" style="margin-bottom: 32px;">
+                    <label><i data-lucide="lock"></i> SECURE PASSCODE</label>
+                    <input type="password" id="reg-pass" placeholder="••••••••">
+                </div>
+                <button class="btn-cyber" onclick="attemptSignup()">
+                    Establish Identity <i data-lucide="fingerprint"></i>
+                </button>
+                <div class="text-link" onclick="toggleAuth('signin')">
+                    Already Cleared? <span>Return to Login</span>
+                </div>
+            </div>
+
+            <!-- OTP VIEW -->
+            <div id="otp-view" class="hidden">
+                <div class="auth-brand" style="margin-bottom: 16px;">
+                    <h3 class="text-cyan" style="font-size: 1.2rem;">2FA VERIFICATION</h3>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px;">A neural packet has been dispatched to:</p>
+                <p id="otp-target" style="text-align: center; font-family: var(--font-code); color: var(--cyan); margin-bottom: 24px; font-weight: bold;"></p>
+                
+                <div id="otp-error" class="error-msg"></div>
+                
+                <div class="input-group" style="margin-bottom: 32px;">
+                    <input type="text" id="otp-val" placeholder="000000" maxlength="6" style="text-align: center; font-size: 1.8rem; letter-spacing: 12px; font-family: var(--font-code); color: var(--green); padding: 16px;">
+                </div>
+                <button class="btn-cyber" onclick="verifyOTP()" style="background: linear-gradient(90deg, var(--green) 0%, #059669 100%);">
+                    Decrypt Payload <i data-lucide="unlock"></i>
+                </button>
+                <div class="text-link" onclick="location.reload()" style="color: var(--red);">
+                    Abort Protocol
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === MAIN DASHBOARD === -->
+    <div id="app" class="hidden">
+        
+        <!-- SIDEBAR -->
+        <aside>
+            <div class="sidebar-brand">
+                <i data-lucide="shield-half" style="color: var(--cyan); width: 32px; height: 32px;"></i>
+                <h2>AGDIP</h2>
+            </div>
+            <nav style="flex: 1;">
+                <a class="nav-link active" onclick="showTab('dashboard')"><i data-lucide="layout-dashboard"></i> Control Center</a>
+                <a class="nav-link" onclick="showTab('scanner')"><i data-lucide="scan-line"></i> Threat Scanner</a>
+                <a class="nav-link" onclick="showTab('live')"><i data-lucide="activity"></i> Live Packet Stream</a>
+                <a class="nav-link" onclick="showTab('batch')"><i data-lucide="layers"></i> Batch Array</a>
+                <a class="nav-link" onclick="showTab('analytics')"><i data-lucide="pie-chart"></i> Neural Analytics</a>
+            </nav>
+            <div style="padding: 24px;">
+                <div style="background: rgba(0,255,159,0.05); border: 1px solid rgba(0,255,159,0.1); border-radius: 8px; padding: 16px; text-align: center;">
+                    <i data-lucide="shield-check" style="color: var(--green); margin-bottom: 8px;"></i>
+                    <div style="font-family: var(--font-code); font-size: 0.75rem; color: var(--green);">SYSTEM SECURE</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main>
+            <!-- TOP NAV -->
+            <header>
+                <div class="header-title">
+                    <h2 id="tab-title">Control Center</h2>
+                    <div class="header-badge"><div class="pulse-dot"></div> UPLINK ACTIVE</div>
+                </div>
+                <div class="user-profile">
+                    <div class="operator-info">
+                        <div class="operator-name" id="display-user">OPERATOR_01</div>
+                        <div class="operator-role">TENANT: <span id="display-tenant" style="color: #fff;">ALPHA</span></div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()"><i data-lucide="log-out"></i></button>
+                </div>
+            </header>
+
+            <!-- TABS ROUTER -->
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content">
+                <div class="kpi-grid">
+                    <div class="glass-panel kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Data Ingested</span>
+                            <div class="kpi-icon blue"><i data-lucide="database"></i></div>
+                        </div>
+                        <div class="kpi-value" id="val-scans">0</div>
+                    </div>
+                    <div class="glass-panel kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Anomalies Isolated</span>
+                            <div class="kpi-icon yellow"><i data-lucide="target"></i></div>
+                        </div>
+                        <div class="kpi-value" style="color: var(--yellow);" id="val-threats">0</div>
+                    </div>
+                    <div class="glass-panel kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Critical Breaches</span>
+                            <div class="kpi-icon red"><i data-lucide="flame"></i></div>
+                        </div>
+                        <div class="kpi-value" style="color: var(--red);" id="val-critical">0</div>
+                    </div>
+                </div>
+                <div class="glass-panel" style="flex: 1; height: 400px; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem;"><i data-lucide="trending-up" style="display:inline; width:18px; color:var(--cyan); margin-right: 8px;"></i> Network Threat Evolution</h3>
+                    <div style="flex: 1; position: relative;"><canvas id="dashboardTrend"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Scanner Tab -->
+            <div id="tab-scanner" class="tab-content hidden">
+                <div class="glass-panel" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem;"><i data-lucide="radar" style="display:inline; width:18px; color:var(--purple); margin-right: 8px;"></i> Neural Payload Scanner</h3>
+                    
+                    <textarea id="scan-input" class="cyber-textarea" placeholder=">_ Paste raw logs, JSON blobs, or network packets here for real-time AI scanning..."></textarea>
+                    
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <input type="file" id="file-up" style="display: none;">
+                        <div class="drop-zone" onclick="document.getElementById('file-up').click()" style="flex: 1; padding: 20px; margin: 0;">
+                            <i data-lucide="file-code" style="width: 24px; height: 24px; margin-bottom: 8px;"></i>
+                            <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--text-muted);">DRAG & DROP OR BROWSE</div>
+                        </div>
+                        <button class="btn-cyber" style="width: 250px; height: 95px; font-size: 1.1rem;" onclick="performScan()">
+                            ANALYZE <i data-lucide="zap"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analysis Results -->
+                <div id="scan-results" class="results-container">
+                    <!-- Left: Verdict -->
+                    <div class="glass-panel" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="font-family: var(--font-head); font-size: 0.8rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 16px;">AI CONFIDENCE SCORE</div>
+                        <div id="risk-gauge" style="font-family: var(--font-code); font-size: 4rem; font-weight: 700; color: var(--cyan); text-shadow: var(--glow-cyan); margin-bottom: 8px;">0.0</div>
+                        <div id="risk-label" class="risk-badge low">CLEAN</div>
+                        <p id="risk-msg" style="font-size: 0.85rem; color: var(--text-muted); padding: 0 10px;">Pending Analysis...</p>
+                    </div>
+                    
+                    <!-- Right: Threat Details -->
+                    <div class="glass-panel" style="display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 16px; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">Detailed Findings</h3>
+                        <div id="findings-list" style="flex: 1; overflow-y: auto;">
+                            <div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No threats isolated in the current payload.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Full Width: Rendered Code View -->
+                    <div id="log-view-container" class="glass-panel" style="display:none; grid-column: span 2;">
+                        <h3 style="margin-bottom: 16px; font-size: 1rem; display: flex; align-items: center; gap: 8px;"><i data-lucide="code-2" style="color:var(--yellow)"></i> Source Introspection</h3>
+                        <div id="log-viewer" class="terminal-box"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Stream Tab -->
+            <div id="tab-live" class="tab-content hidden">
+                <div class="glass-panel">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem; display: flex; justify-content: space-between;">
+                        <span><i data-lucide="radio" style="display:inline; width:18px; color:var(--green); margin-right: 8px;"></i> Live Socket Telemetry</span>
+                        <div class="header-badge"><div class="pulse-dot"></div> LISTENING</div>
+                    </h3>
+                    <div id="stream-feed" class="terminal-box" style="height: 600px; display: flex; flex-direction: column-reverse;">
+                        <div style="color: var(--text-muted); text-align: center; margin-top: auto; padding: 20px;">Awaiting packets...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Tab -->
+            <div id="tab-batch" class="tab-content hidden">
+                <div class="glass-panel" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem;">Batch API Sandbox</h3>
+                    <textarea id="batch-input" class="cyber-textarea" style="height: 150px;">[
+  {"input_type": "text", "content": "password=admin123"},
+  {"input_type": "text", "content": "normal log entry"}
+]</textarea>
+                    <button class="btn-cyber" style="width: auto; padding: 12px 32px;" onclick="performBatch()">EXECUTE BATCH ARRAY <i data-lucide="play"></i></button>
+                </div>
+                <div class="glass-panel">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem;">Execution Output</h3>
+                    <pre id="batch-list" class="terminal-box" style="height: auto; min-height: 200px; color: var(--green);"></pre>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="tab-analytics" class="tab-content hidden">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom: 24px; font-size: 1rem; text-align: center;">Cluster Distribution</h3>
+                        <div style="height: 300px; position: relative;"><canvas id="analyticsPie"></canvas></div>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom: 24px; font-size: 1rem; text-align: center;">Threat Severity Matrix</h3>
+                        <div style="height: 300px; position: relative;"><canvas id="analyticsBar"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    // ICON INITIATION
+    lucide.createIcons();
+    
+    // CORE STATE
+    let TOKEN = sessionStorage.getItem('asdip_token');
+    let socket = null;
+    let trendChart = null;
+    let authContext = 'login';
+    let authEmail = '';
+
+    // AUTH FUNCTIONS
+    function toggleAuth(type) {
+        document.getElementById('signin-view').classList.toggle('hidden', type !== 'signin');
+        document.getElementById('signup-view').classList.toggle('hidden', type !== 'signup');
+        document.getElementById('otp-view').classList.add('hidden');
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('signup-error').style.display = 'none';
+    }
+
+    async function attemptSignup() {
+        const u = document.getElementById('reg-user').value;
+        const e = document.getElementById('reg-email').value;
+        const p = document.getElementById('reg-pass').value;
+        const err = document.getElementById('signup-error');
+        
+        if(!u || !e || !p) return;
+        
+        try {
+            const res = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, email: e, password: p })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                authContext = 'signup';
+                authEmail = e;
+                showOTP(e);
+            } else {
+                err.innerText = data.detail || 'Signup Failed';
+                err.style.display = 'block';
+            }
+        } catch (e) { err.innerText = 'Service Unreachable'; err.style.display = 'block'; }
+    }
+
+    async function attemptLogin() {
+        const u = document.getElementById('user-val').value;
+        const p = document.getElementById('pass-val').value;
+        const err = document.getElementById('login-error');
+        
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                if (data.status === 'otp_sent') {
+                    authContext = 'login';
+                    authEmail = data.email;
+                    showOTP(data.email);
+                } else {
+                    TOKEN = data.access_token;
+                    sessionStorage.setItem('asdip_token', TOKEN);
+                    initDashboard();
+                }
+            } else {
+                err.innerText = data.detail || 'Access Denied';
+                err.style.display = 'block';
+            }
+        } catch (e) { err.innerText = 'Platform Offline'; err.style.display = 'block'; }
+    }
+
+    function showOTP(email) {
+        document.getElementById('signin-view').classList.add('hidden');
+        document.getElementById('signup-view').classList.add('hidden');
+        document.getElementById('otp-view').classList.remove('hidden');
+        document.getElementById('otp-target').innerText = email;
+    }
+
+    async function verifyOTP() {
+        const otp = document.getElementById('otp-val').value;
+        const err = document.getElementById('otp-error');
+        
+        try {
+            const res = await fetch('/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: authEmail, otp: otp, context: authContext })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                TOKEN = data.access_token;
+                sessionStorage.setItem('asdip_token', TOKEN);
+                initDashboard();
+            } else {
+                err.innerText = data.detail || 'Invalid Activation Code';
+                err.style.display = 'block';
+            }
+        } catch (e) { err.innerText = 'Verification Timed Out'; err.style.display = 'block'; }
+    }
+
+    function initDashboard() {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        
+        // Decode Token for basic UI data
+        try {
+            const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+            document.getElementById('display-user').innerText = payload.sub || 'OPERATOR';
+            document.getElementById('display-tenant').innerText = payload.tenant_id || 'ALPHA';
+        } catch(e) {}
+        
+        loadTrend();
+        connectSocket();
+    }
+
+    function showTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.remove('hidden');
+        event.currentTarget.classList.add('active');
+        document.getElementById('tab-title').innerText = event.currentTarget.innerText.trim();
+    }
+
+    // SCAN ENGINE
+    async function performScan() {
+        const txtInput = document.getElementById('scan-input').value;
+        const fileInput = document.getElementById('file-up').files[0];
+        const resView = document.getElementById('scan-results');
+        const errorMsg = document.getElementById('risk-msg');
+        const findingsList = document.getElementById('findings-list');
+
+        if(!txtInput.trim() && !fileInput) return;
+        
+        resView.classList.add('visible');
+        document.getElementById('risk-label').innerText = 'ANALYZING...';
+        document.getElementById('risk-label').className = 'risk-badge';
+        document.getElementById('risk-gauge').innerText = '...';
+        findingsList.innerHTML = '<div style="color:var(--cyan); font-family:var(--font-code);">Running tensor heuristics...</div>';
+        document.getElementById('log-view-container').style.display = 'none';
+        
+        const fd = new FormData();
+        if(fileInput) { fd.append('file', fileInput); }
+        else { fd.append('text_input', txtInput); }
+        
+        try {
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + TOKEN },
+                body: fd
+            });
+            
+            if(!response.ok) {
+                const err = await response.json();
+                document.getElementById('risk-label').innerText = 'REJECTED';
+                document.getElementById('risk-label').className = 'risk-badge critical';
+                errorMsg.innerText = err.error || 'Parsing module failed.';
+                findingsList.innerHTML = '';
+                return;
+            }
+            
+            const data = await response.json();
+            renderResults(data);
+        } catch (e) {
+            document.getElementById('risk-label').innerText = 'TIMEOUT';
+            document.getElementById('risk-label').className = 'risk-badge critical';
+            errorMsg.innerText = 'Neural link disconnected.';
+        }
+    }
+
+    function renderResults(data) {
+        const gauge = document.getElementById('risk-gauge');
+        gauge.innerText = parseFloat(data.risk_score).toFixed(1);
+        
+        let rClass = 'low';
+        if (data.risk_level === 'critical' || data.risk_level === 'high') { rClass = 'critical'; gauge.style.color = 'var(--red)'; gauge.style.textShadow = '0 0 15px rgba(255,51,102,0.4)'; }
+        else if (data.risk_level === 'medium') { rClass = 'high'; gauge.style.color = 'var(--yellow)'; gauge.style.textShadow = '0 0 15px rgba(245,158,11,0.4)'; }
+        else { rClass = 'low'; gauge.style.color = 'var(--green)'; gauge.style.textShadow = '0 0 15px rgba(0,255,159,0.4)'; }
+        
+        const badge = document.getElementById('risk-label');
+        badge.innerText = data.risk_level.toUpperCase() + ' RISK';
+        badge.className = 'risk-badge ' + rClass;
+        
+        document.getElementById('risk-msg').innerText = data.why_risk || data.alert || 'Target profile validated securely.';
+        
+        const list = document.getElementById('findings-list');
+        if (data.findings && data.findings.length > 0) {
+            list.innerHTML = data.findings.map(f => `
+                <div class="finding-item" style="border-color: var(--${f.risk === 'critical' ? 'red' : f.risk === 'high' ? 'yellow' : 'cyan'})">
+                    <div class="finding-type">${f.type.toUpperCase()} <span style="float:right; opacity:0.5;">Line ${f.line_content ? 'Match' : 'N/A'}</span></div>
+                    <div class="finding-desc">${f.line_content || 'Structural pattern match'}</div>
+                </div>
+            `).join('');
+        } else {
+            list.innerHTML = '<div style="color: var(--green); font-family: var(--font-code);">[OK] 0 active threats detected.</div>';
+        }
+
+        // SOURCE INTROSPECTION HIGHLIGHTING
+        const txtInput = document.getElementById('scan-input').value;
+        const viewerContainer = document.getElementById('log-view-container');
+        const viewer = document.getElementById('log-viewer');
+        
+        if (txtInput.trim()) {
+            const lines = txtInput.split('\n');
+            let html = '';
+            lines.forEach((line, i) => {
+                const lineNum = i + 1;
+                const isFlagged = (data.flagged_line_numbers && data.flagged_line_numbers.includes(lineNum));
+                const isML = (data.anomalies && data.anomalies.includes(lineNum));
+                const isHF = (data.hf_anomalies && data.hf_anomalies.includes(lineNum));
+                
+                let bg = 'transparent'; let tag = '';
+                if (isFlagged) { 
+                    bg = 'rgba(255, 51, 102, 0.15)'; 
+                    tag = '<span class="tag-flagged" style="margin-left:8px;">FLAGGED (SIG)</span>'; 
+                }
+                else if (isML || isHF) { 
+                    bg = 'rgba(245, 158, 11, 0.15)'; 
+                    const mType = (isML && isHF) ? 'TENSOR+ML' : (isHF ? 'TENSOR' : 'ISOFOREST');
+                    tag = `<span class="tag-anomaly" style="margin-left:8px;">ANOMALY [${mType}]</span>`; 
+                }
+                
+                const safeStr = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html += `<div class="log-line" style="background: ${bg}; padding: 4px 8px;">
+                    <span class="log-num">${lineNum.toString().padStart(3, '0')}</span>
+                    <span style="color: #E5E7EB;">${safeStr}</span>${tag}
+                </div>`;
+            });
+            viewer.innerHTML = html;
+            viewerContainer.style.display = 'block';
+        }
+    }
+
+    async function performBatch() {
+        const val = document.getElementById('batch-input').value;
+        const list = document.getElementById('batch-list');
+        list.innerText = '> Executing array sequence...';
+
+        try {
+            const parsed = JSON.parse(val);
+            const res = await fetch('/analyze/batch', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+                body: JSON.stringify(parsed)
+            });
+            const data = await res.json();
+            list.innerText = JSON.stringify(data.batch_results || data, null, 2);
+        } catch(e) {
+            list.innerHTML = `<span style="color: var(--red)">> SYS_ERR: Invalid JSON topography.</span>`;
+        }
+    }
+
+    // LIVE SOCKET TELEMETRY
+    function connectSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        socket = new WebSocket(`${protocol}//${window.location.host}/ws/stream`);
+        const feed = document.getElementById('stream-feed');
+        feed.innerHTML = '';
+        
+        socket.onmessage = (event) => {
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            const now = new Date().toLocaleTimeString('en-US', {hour12:false});
+            try {
+                const res = JSON.parse(event.data);
+                const col = res.risk_level === 'critical' ? 'var(--red)' : res.risk_level === 'high' ? 'var(--yellow)' : 'var(--green)';
+                line.innerHTML = `<span class="log-ts">[${now}]</span> <span style="color:var(--cyan); width: 60px; display:inline-block;">PACKET</span> <span style="font-weight:bold; color:${col}; width: 100px; display:inline-block;">${res.risk_level.toUpperCase()}</span> <span style="color:#fff;">SCORE:${res.score} | ANOMALIES:${res.findings.length}</span>`;
+            } catch (e) {
+                line.innerHTML = `<span class="log-ts">[${now}]</span> <span style="color:var(--purple); width: 60px; display:inline-block;">SYSTEM</span> <span style="color:#fff;">${event.data}</span>`;
+            }
+            feed.prepend(line);
+            if(feed.children.length > 50) feed.lastChild.remove();
+        };
+        
+        // Mock Pings
+        setInterval(() => {
+            if(socket.readyState === WebSocket.OPEN) {
+                const rng = Math.random();
+                if(rng < 0.2) socket.send(`2026-03-26 INFO Connection established from Node ${Math.floor(Math.random()*100)}`);
+            }
+        }, 12000);
+    }
+
+    // ANALYTICS & TRENDS
+    async function loadTrend() {
+        try {
+            const res = await fetch('/trend', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+            const data = await res.json();
+            
+            Chart.defaults.color = '#9CA3AF';
+            Chart.defaults.font.family = "'Fira Code', monospace";
+            
+            const ctx = document.getElementById('dashboardTrend').getContext('2d');
+            if(trendChart) trendChart.destroy();
+            
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => new Date(d.t).toLocaleTimeString('en-US', {hour12:false})),
+                    datasets: [{
+                        label: 'Threat Intensity',
+                        data: data.map(d => d.s),
+                        borderColor: '#00F5FF',
+                        backgroundColor: 'rgba(0, 245, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#0B0F19',
+                        pointBorderColor: '#00F5FF',
+                        pointHoverBackgroundColor: '#00F5FF'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Generate Stats
+            const statRes = await fetch('/stats', { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+            const stats = await statRes.json();
+            
+            document.getElementById('val-scans').innerText = stats.total_scans;
+            document.getElementById('val-threats').innerText = stats.total_findings;
+            document.getElementById('val-critical').innerText = stats.risk_counts?.critical || 0;
+            
+            if(window.pieChart) { window.pieChart.destroy(); window.barChart.destroy(); }
+            
+            window.pieChart = new Chart(document.getElementById('analyticsPie'), {
+                type: 'doughnut',
+                data: { 
+                    labels: ['Safe Operations', 'Identified Threats'], 
+                    datasets: [{ data: [stats.total_scans - stats.total_findings, stats.total_findings], backgroundColor: ['#00FF9F', '#FF3366'], borderWidth: 0, cutout: '75%' }] 
+                },
+                options: { plugins: { legend: { position: 'bottom'} }, layout: { padding: 20 } }
+            });
+            
+            window.barChart = new Chart(document.getElementById('analyticsBar'), {
+                type: 'bar',
+                data: { 
+                    labels: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'], 
+                    datasets: [{ 
+                        data: [stats.risk_counts?.low||0, stats.risk_counts?.medium||0, stats.risk_counts?.high||0, stats.risk_counts?.critical||0], 
+                        backgroundColor: ['#00FF9F', '#F59E0B', '#FF3366', '#8B5CF6'],
+                        borderRadius: 4
+                    }] 
+                },
+                options: { scales: { y: { beginAtZero: true, grid: {color: 'rgba(255,255,255,0.05)'} }, x:{ grid:{display:false} } }, plugins: { legend: { display: false } } }
+            });
+        } catch(e) { console.error("Metrics DB Error", e); }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('asdip_token');
+        location.reload();
+    }
+
+    // Auto-init if JWT exists in session state
+    if(TOKEN) initDashboard();
+
+</script>
+</body>
+</html>
