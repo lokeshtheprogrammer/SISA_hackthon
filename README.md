@@ -96,3 +96,4 @@ Analyzes a payload and returns the risk score, findings, and masked logs.
 
 GET `/api/stream`
 An SSE (Server-Sent Event) connection point to tail the active backend log stream in real-time.
+<img width="1919" height="916" alt="Screenshot 2026-03-26 223337" src="https://github.com/user-attachments/assets/82e3987f-e645-44af-8d15-8d9b4573c1fa" />
